@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geo Explorer Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <canvas id="fractal-canvas"></canvas>
+    <!-- Screen 0: Loading -->
+    <div id="loading-screen" class="screen">
+        <h2 data-translate-key="loading">Finding an interesting place...</h2>
+    </div>
+
+    <!-- Screen 1: Start Menu -->
+    <div id="start-screen" class="screen active">
+        <h1>Geo Explorer</h1>
+        
+        <!-- FIXED: Moved the switcher INSIDE the start screen -->
+        <div class="language-switcher-container">
+            <select id="language-switcher">
+              <option value="uk">Українська</option>
+                 <option value="en">English</option>
+                <option value="nl">Nederlands</option>
+                <option value="fr">Français</option>
+                <option value="de">Deutsch</option>
+                <option value="pl">Polski</option>
+                <option value="ar">العربية</option>
+                <option value="zh">中文</option>
+                <option value="hi">हिन्दी</option>                    
+                <option value="pt">Português</option>
+                <option value="es">Español</option>
+                <option value="sv">Svenska</option>
+                <option value="tr">Türkçe</option>              
+                <option value="it">Italiano</option>
+                <option value="ja">日本語</option>
+                <option value="ko">한국어</option>          
+            </select>
+        </div>
+        
+        <button id="start-btn" class="action-button" data-translate-key="startGame">Start Game</button>
+        <button id="settings-btn" class="secondary-button" data-translate-key="settings">Settings</button>
+    </div>
+
+    <!-- Screen 1.5: Name Input Modal -->
+    <div id="name-input-screen" class="screen">
+        <div class="settings-container">
+            <h2 data-translate-key="enterYourName">Enter Your Name</h2>
+            <input type="text" id="player-name-input" maxlength="30" placeholder="Max 30 characters">
+            <div class="settings-buttons">
+                <button id="confirm-name-btn" class="action-button" data-translate-key="continue">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 2: Settings -->
+    <div id="settings-screen" class="screen">
+        <div class="settings-container">
+            <h2 data-translate-key="gameSettings">Game Settings</h2>
+            
+            <div class="settings-section">
+                <h3 data-translate-key="roundTimer">Round Timer:</h3>
+                <div class="radio-group">
+                    <label><input type="radio" name="timer-setting" value="15"> 15 sec</label>
+                    <label><input type="radio" name="timer-setting" value="30"> 30 sec</label>
+                    <label><input type="radio" name="timer-setting" value="60" checked> 60 sec</label>
+                    <label><input type="radio" name="timer-setting" value="100"> 100 sec</label>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3 data-translate-key="searchZones">Search Zones:</h3>
+                <div id="zone-checkboxes" class="checkbox-group"></div>
+            </div>
+
+            <div class="settings-buttons">
+                <button id="save-settings-btn" class="action-button" data-translate-key="save">Save</button>
+                <button id="back-to-main-btn" class="secondary-button" data-translate-key="backToMenu">Back to Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 3: Gameplay -->
+    <div id="game-screen" class="screen">
+        <div id="street-view"></div>
+        <div id="game-ui">
+            <!-- FIXED: Added keys to translatable text -->
+            <p><span data-translate-key="time">Time</span>: <span id="timer">100</span>s</p>
+            <p><span data-translate-key="moves">Moves</span>: <span id="steps">500</span></p>
+        </div>
+        <button id="quit-game-btn" class="quit-button" data-translate-key="quitGame">Main Menu</button>
+        
+        <div class="hint-container">
+            <span class="tooltip-text" data-translate-key="hintTooltip"></span>
+            <button id="hint-btn" class="hint-button" data-translate-key="hint">Hint</button>
+        </div>
+
+        <button id="guess-now-btn" class="action-button" data-translate-key="guessNow">Guess!</button>
+    </div>
+    
+    <!-- Screen 4: Guessing Map -->
+    <div id="guess-screen" class="screen">
+        <h2 data-translate-key="whereAreYou">Where do you think you are?</h2>
+        <div class="map-container">
+            <div id="guess-map"></div>
+        </div>
+        <button id="submit-guess-btn" class="action-button" style="margin-top: 20px;" data-translate-key="confirmGuess">Confirm Guess</button>
+    </div>
+
+    <!-- Screen 5: Results -->
+    <div id="result-screen" class="screen">
+        <h2 data-translate-key="roundComplete">Round Complete!</h2>
+        <p><span data-translate-key="distance">Distance</span>: <span id="distance-result"></span> km</p>
+        <p><span data-translate-key="roundScore">Round Score</span>: <span id="score-result"></span></p>
+
+        <div class="result-content-wrapper">
+            <div id="location-info">
+                <div>
+                    <strong data-translate-key="targetLocation">Target Location:</strong>
+                    <span id="actual-coords" data-translate-key-placeholder="loadingLocation">Loading...</span>
+                </div>
+                <div>
+                    <strong data-translate-key="yourGuess">Your Guess:</strong>
+                    <span id="guess-coords" data-translate-key-placeholder="loadingLocation">Loading...</span>
+                </div>
+            </div>
+          
+            <div id="result-map"></div>
+
+            <div class="session-summary-container">
+            <h3><span data-translate-key="sessionFor">Session for</span> <span id="player-name-display"></span></h3>
+            <p style="font-size: 1.6em; font-weight: bold; color: #1DB954; margin: 10px 0;">
+                <span data-translate-key="totalScore">Total Score:</span> <span id="total-score-value">0</span>
+            </p>
+            
+            <h4 style="margin-top: 20px;" data-translate-key="roundHistory">Round History</h4>
+            <ul id="leaderboard-list">
+                <!-- Leaderboard items will be added here by JavaScript -->
+            </ul>
+        </div>
+        </div>
+    
+        <button id="play-again-btn" class="action-button" data-translate-key="playAnotherRound">Play Another Round</button>
+        <button id="end-session-btn" class="secondary-button" data-translate-key="endSession">End Session & Return to Menu</button>
+    </div>
+  
+    <!-- --- DYNAMIC SCRIPT LOADING --- -->
+    <script src="apiKey.js"></script>
+    <script src="config.js"></script>
+    
+    <!-- FIXED: translations.js MUST be loaded BEFORE game-test.js -->
+    <script src="translations.js"></script>
+    <script src="game-test.js"></script>
+
+    <script>
+      // This block remains unchanged
+      function initializeMapScript(apiKey) {
+        if (!apiKey) {
+          console.error("API Key is missing. Cannot load map.");
+          document.body.innerHTML = '<h1>Error: API Key is missing.</h1><p>Site owner: Please configure the GOOGLE_API_KEY environment variable in Netlify.</p>';
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry&callback=initGame`;
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+      }
+
+      async function loadApiAndInitialize() {
+        try {
+          const response = await fetch('/.netlify/functions/get-key');
+          if (!response.ok) {
+            throw new Error(`Netlify function failed with status: ${response.status}`);
+          }
+          const data = await response.json();
+          console.log("Success! Using API key from Netlify function.");
+          initializeMapScript(data.apiKey);
+        } catch (error) {
+          console.warn("Could not fetch key from Netlify. This is normal for local development. Falling back to apiKey.js.");
+          if (typeof GOOGLE_API_KEY !== 'undefined') {
+            initializeMapScript(GOOGLE_API_KEY);
+          } else {
+            console.error("Local GOOGLE_API_KEY not found in apiKey.js.");
+            document.body.innerHTML = '<h1>Error: Local API Key is not defined.</h1>';
+          }
+        }
+      }
+      loadApiAndInitialize();
+
+      // This function now defines a global getHint function based on the environment.
+      async function loadGeminiApi() {
+        try {
+          // First, try to fetch the key from Netlify. This tells us the environment.
+          const keyResponse = await fetch('/.netlify/functions/get-gemini-key');
+          if (!keyResponse.ok) throw new Error('Not on Netlify');
+          
+          // --- NETLIFY ENVIRONMENT ---
+          console.log("Hint system running in Netlify mode.");
+          window.getHint = async (lat, lng, playerName, language) => {
+            const response = await fetch('/.netlify/functions/get-gemini-hint', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ lat, lng, playerName, language }),
+            });
+            if (!response.ok) {
+               const err = await response.json();
+               throw new Error(err.error || "Hint function failed");
+            }
+            const data = await response.json();
+            return data.hint;
+          };
+
+        } catch (error) {
+          // --- LOCAL ENVIRONMENT ---
+          console.warn("Hint system running in local fallback mode.");
+          if (typeof GEMINI_API_KEY !== 'undefined' && GEMINI_API_KEY) {
+            window.getHint = async (lat, lng, playerName, language) => {
+              const prompt = `You are a multilingual game master for a geography guessing game. The player's name is ${playerName}.
+
+Your task is to generate a single, concise, and well-known factual hint for the location at coordinates: ${lat}, ${lng}.
+
+The hint must focus on one of the following topics for the immediate area:
+- A unique geographical feature (a nearby river, mountain, or sea).
+- A famous cultural product (a type of food, music, or art).
+- A major historical event that happened there.
+
+The hint MUST NOT include the name of the city, region, or country.
+
+Your entire response must be ONLY the hint text.
+
+CRITICAL FINAL INSTRUCTION: The hint must be written in the following language: ${language}.`;
+              const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+              const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+              });
+
+              if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.error.message || "Direct Gemini API call failed");
+              }
+              const data = await response.json();
+              return data.candidates[0]?.content?.parts[0]?.text;
+            };
+          } else {
+            // No key available at all
+            console.error("Local GEMINI_API_KEY not found in apiKey.js.");
+            window.getHint = () => {
+              throw new Error("Gemini API Key is not configured for local development.");
+            }
+          }
+        }
+      }
+      loadGeminiApi();
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="background-animation.js"></script>
+</body>
+</html>
