@@ -3,7 +3,7 @@
 
 🔍 Guess your location using **Google Street View** and test your geography skills!  
 
-[![Netlify Status](https://world-explorer2504.netlify.app/))  
+LINK:https://world-explorer2504.netlify.app/
 
 ---
 
