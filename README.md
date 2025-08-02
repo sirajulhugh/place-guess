@@ -88,5 +88,5 @@ Implement multiplayer mode
 Optimize AI hints with caching
 
 📜 License
-MIT © SIRAHULHUGH
+MIT © SIRAJULHUGH
 
