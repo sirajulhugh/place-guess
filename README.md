@@ -29,16 +29,17 @@ LINK:https://world-explorer2504.netlify.app/
 
 ## 📂 Project Structure  
 
-├── index.html  Main HTML entry point
-├── game-test.js  Core game logic
-├── config.js  Geographic search zones
-├── style.css  Styling
-├── netlify/  Serverless functions
-│ ├── functions/
-│ │ ├── get-key.js  Fetches Google Maps key
-│ │ ├── get-gemini-key.js  Fetches Gemini key
-│ │ └── get-gemini-hint.js  Proxies Gemini API requests
-└── apiKey.js  Local API keys (ignored by Git)
+.
+├── index.html          # Main HTML entry point  
+├── game-test.js        # Core game logic  
+├── config.js           # Geographic search zones  
+├── style.css           # Styling  
+├── netlify/            # Serverless functions  
+│   ├── functions/  
+│   │   ├── get-key.js           # Fetches Google Maps key  
+│   │   ├── get-gemini-key.js    # Fetches Gemini key  
+│   │   └── get-gemini-hint.js   # Proxies Gemini API requests  
+└── apiKey.js           # Local API keys (ignored by Git)  
 
 
 ---
