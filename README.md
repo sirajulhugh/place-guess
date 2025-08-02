@@ -29,7 +29,7 @@ LINK:https://world-explorer2504.netlify.app/
 
 ## 📂 Project Structure  
 
-.
+
 ├── index.html          # Main HTML entry point  
 ├── game-test.js        # Core game logic  
 ├── config.js           # Geographic search zones  
